@@ -34,13 +34,13 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;paddin
 .wrap{max-width:640px;margin:0 auto;padding:0 16px}
 
 /* top bar */
-.top{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)}
+.top{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:5;background:var(--bg)}
 .top .wrap{display:flex;align-items:center;gap:10px;height:56px}
 .top h1{font-size:19px;font-weight:800;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .top h1 b{color:var(--brand)}
 .icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:19px;color:var(--muted)}
 .icon:hover{background:var(--soft)}
-main{padding-bottom:110px}
+main{padding-bottom:140px}
 
 /* bottom tabs */
 .tabs{position:fixed;bottom:0;inset-inline:0;z-index:6;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
@@ -78,9 +78,9 @@ button.item:hover{background:var(--soft)}
 .chip{border-radius:99px;padding:6px 13px;font-size:14px;background:var(--card);border:1px solid var(--line)}
 .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .empty{text-align:center;padding:36px 16px;color:var(--muted)}
-details>summary{cursor:pointer;list-style:none;font-weight:600;color:var(--brand);padding:6px 0}
+details>summary{cursor:pointer;list-style:none;font-weight:600;color:var(--brand);padding:6px 0;display:flex;align-items:center;gap:6px}
 details>summary::-webkit-details-marker{display:none}
-details>summary::before{content:"+ ";} details[open]>summary::before{content:"− ";}
+details>summary::before{content:"+";width:14px;text-align:center} details[open]>summary::before{content:"−"}
 
 /* home */
 .hero{display:flex;align-items:center;gap:18px}
@@ -89,6 +89,10 @@ details>summary::before{content:"+ ";} details[open]>summary::before{content:"�
 .hero .k{font-size:13px;color:var(--muted)}
 .hero .v{font-size:22px;font-weight:800}
 .check{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px}
+.item.next{background:var(--brand-soft)}
+.item.next .t{color:var(--brand)}
+.item.next .check{border-color:var(--brand)}
+.item .go{background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:14px;padding:7px 14px;border-radius:99px;white-space:nowrap}
 .check.done{background:var(--ok);border-color:var(--ok);color:#fff}
 
 /* quiz */
@@ -106,8 +110,6 @@ details>summary::before{content:"+ ";} details[open]>summary::before{content:"�
 .opt.bad{border-color:var(--bad);background:var(--bad-soft)} .opt.bad .k{background:var(--bad);color:#fff}
 .opt.dim{opacity:.55}
 .opt:disabled{cursor:default}
-.conf{margin-top:18px}
-.conf .lbl{font-size:13px;color:var(--muted);margin-bottom:6px;text-align:center}
 .fb{margin-top:18px;background:var(--card);border-radius:16px;padding:16px}
 .fb .verdict{font-weight:800;font-size:17px;margin-bottom:10px}
 .fb p{margin:0 0 10px}
@@ -133,6 +135,7 @@ textarea{width:100%;font:inherit;margin-top:8px;padding:10px;border-radius:10px;
 .stats3 .card{padding:14px;text-align:center}
 .stats3 .n{font-size:24px;font-weight:800}
 .stats3 .l{font-size:12px;color:var(--muted)}
+@media (max-width:480px){.qtext{font-size:17px}.opt{font-size:15.5px;padding:12px}}
 .notes{font-size:15.5px}
 .notes h4{margin:18px 0 6px;font-size:16px} .notes h4:first-child{margin-top:0}
 .notes ul,.notes ol{padding-inline-start:20px;margin:6px 0}
@@ -140,7 +143,7 @@ textarea{width:100%;font:inherit;margin-top:8px;padding:10px;border-radius:10px;
 .notes table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}
 .notes td,.notes th{border:1px solid var(--line);padding:6px 8px;text-align:start;vertical-align:top}
 .flash{min-height:220px;display:grid;place-items:center;text-align:center;font-size:20px;font-weight:500;cursor:pointer;padding:24px}
-.switch{position:relative;width:46px;height:28px;flex:0 0 46px}
+.switch{position:relative;display:inline-block;vertical-align:middle;width:46px;height:28px;flex:0 0 46px}
 .switch input{opacity:0;width:0;height:0}
 .switch span{position:absolute;inset:0;background:var(--line);border-radius:99px;transition:.2s;cursor:pointer}
 .switch span::before{content:"";position:absolute;width:22px;height:22px;top:3px;inset-inline-start:3px;background:#fff;border-radius:50%;transition:.2s}
@@ -317,12 +320,14 @@ function toast(msg){ const d = document.createElement("div"); d.className = "toa
 function shell(title, back, tab, body){
   ACT.length = 0;
   $("#top").innerHTML = (title ? `<button class="icon" onclick="${back ? `go('${back}')` : "history.back()"}" aria-label="חזרה">→</button><h1>${esc(title)}</h1>`
-    : `<h1>מתווך <b>100</b></h1>`) + `<button class="icon" onclick="go('settings')" aria-label="הגדרות">⚙</button>`;
+    : `<h1>מתווך <b>100</b></h1>`) + (location.hash.startsWith("#/settings") ? "" : `<button class="icon" onclick="go('settings')" aria-label="הגדרות">⚙</button>`);
   $("#tabs").style.display = ""; $("#actions").innerHTML = "";
   $("#tabs .wrap").innerHTML = TABS.map(([k, l]) => `<button class="${k === tab ? "on" : ""}" onclick="go('${k}')">${ICONS[k]}${l}</button>`).join("");
   $("#app").innerHTML = typeof body === "function" ? body() : body;
-  window.scrollTo({top:0});
+  if (location.hash !== lastHash) window.scrollTo({top:0});   // keep scroll position when re-rendering the same page
+  lastHash = location.hash;
 }
+let lastHash = "";
 let tick = null;
 function route(){
   clearInterval(tick);
@@ -362,7 +367,7 @@ function plan(){
   if (dl <= 1) task("חזרה קלה בלבד", "הטעויות שעניתם עליהן 'בטוח'. בלי חומר חדש, ולישון מוקדם.", false,
     () => start("טעויות בביטחון", active().filter(q => S.q[q.id]?.hc).map(q => q.id)));
   else {
-    task(`${target} שאלות`, `${did} נענו היום`, did >= target, () => start("תרגול חכם", smartSet(S.settings.perSession)));
+    task(`לענות על ${target} שאלות`, `נענו היום: ${did}`, did >= target, () => start("תרגול חכם", smartSet(S.settings.perSession)));
     if (due || mis) task("לסגור טעויות", due ? `${due} ממתינות לחזרה` : "אין טעויות לחזרה כרגע", due === 0, () => start("הטעויות שלי", mistakeIds()));
     if (phase === "בנייה" && weak) task("נושא חלש", weak, todays.some(s => s.title === weak), () => go("learn/t/" + encodeURIComponent(weak)));
     if (phase === "חיזוק" && nextExam) task("מבחן קודם עם שעון", fmt(nextExam.date), todays.some(s => s.kind === "past"),
@@ -383,11 +388,12 @@ function view_home(){
       <div><div class="k">ציון צפוי בבחינה</div>
         <div class="v" style="font-size:16px;font-weight:600;margin-top:4px">${mast} / ${all.length} <span class="muted small">שאלות נשלטו</span></div>
         <div class="small muted" style="margin-top:2px">${dl === null ? `<a href="#/settings" style="color:var(--brand)">קבעו תאריך בחינה</a>` : `${dl} ימים לבחינה`} · רצף ${streakDays()} ימים</div></div></div>
-    ${next ? `<button class="btn" style="margin-top:14px" onclick="${act(next.fn)}">${esc(next.t)}<div style="font-weight:400;font-size:13px;opacity:.85">${esc(next.s)}</div></button>`
-      : `<div class="card" style="margin-top:14px;text-align:center">✅ סיימתם את התוכנית של היום</div>`}
-    <div class="sec-title">היום · שלב ${phase}</div>
-    <div class="list">${T.map(t => `<button class="item" onclick="${act(t.fn)}"><span class="check ${t.done ? "done" : ""}">${t.done ? "✓" : ""}</span>
-      <span class="tx"><div class="t" style="${t.done ? "color:var(--muted);text-decoration:line-through" : ""}">${esc(t.t)}</div><div class="s">${esc(t.s)}</div></span><span class="chev"></span></button>`).join("")}</div>`;
+    <div class="sec-title">התוכנית להיום · שלב ${phase}</div>
+    <div class="list">${T.map(t => t === next
+      ? `<button class="item next" onclick="${act(t.fn)}"><span class="check"></span><span class="tx"><div class="t">${esc(t.t)}</div><div class="s">${esc(t.s)}</div></span><span class="go">התחל</span></button>`
+      : `<button class="item" onclick="${act(t.fn)}"><span class="check ${t.done ? "done" : ""}">${t.done ? "✓" : ""}</span>
+      <span class="tx"><div class="t" style="${t.done ? "color:var(--muted);text-decoration:line-through" : ""}">${esc(t.t)}</div><div class="s">${esc(t.s)}</div></span><span class="chev"></span></button>`).join("")}</div>
+    ${next ? "" : `<div class="card" style="margin-top:12px;text-align:center">✅ סיימתם את התוכנית של היום</div>`}`;
   });
 }
 
@@ -400,10 +406,10 @@ function view_practice(sub){
     return `<div class="seg">${[["all","הכול"],["unseen","שלא נענו"],["wrong","טעויות"]].map(([k, l]) =>
       `<button class="${pStatus === k ? "on" : ""}" onclick="pStatus='${k}';view_practice('topics')">${l}</button>`).join("")}</div>
       <div class="list" style="margin-top:12px">${ts.map(o => { const n = pool(o.t).length;
-        return item(`<b style="font-size:13px">${Math.round(100 * (QB.weights[o.t] || 0))}%</b>`, esc(o.t),
-          `${n} שאלות${o.seen ? ` · דיוק ${pct(o.corr, o.seen)}%` : ""}`, "",
+        return item("", esc(o.t),
+          `${n} שאלות · ${Math.max(1, Math.round(100 * (QB.weights[o.t] || 0)))}% מהבחינה${o.seen ? ` · דיוק ${pct(o.corr, o.seen)}%` : ""}`, "",
           n ? act(() => start(o.t, shuffle(pool(o.t).map(q => q.id)).sort((x, y) => isMastered(x) - isMastered(y)).slice(0, 20))) : ""); }).join("")}</div>
-      <p class="small muted" style="margin:10px 4px">האחוז = משקל הנושא במבחנים האמיתיים. כל לחיצה: עד 20 שאלות, קודם אלה שעוד לא נשלטו.</p>`;
+      <p class="small muted" style="margin:10px 4px">כל נושא: עד 20 שאלות, קודם אלה שעוד לא נשלטו.</p>`;
   });
   if (sub === "exams") return shell("מבחנים קודמים", "practice", "practice", () => {
     const best = {};
@@ -459,27 +465,30 @@ function renderQuiz(){
       ${q.old ? `<span class="pill warn">ייתכן שאינה עדכנית</span>` : ""}</div>
     <div class="qtext">${hl(q.q)}</div>
     ${hideOpts ? `<div class="card" style="margin-top:18px;text-align:center"><div style="font-size:15px">נסחו לעצמכם תשובה לפני שאתם רואים את האפשרויות.</div></div>` : `<div class="opts">${opts}</div>`}
-    ${!exam && !shown && mine !== undefined && S.settings.conf ? `<div class="conf"><div class="lbl">כמה אתם בטוחים?</div>
-      <div class="seg" style="margin:0">${CONF.map(([k, l]) => `<button onclick="check('${k}')">${l}</button>`).join("")}</div></div>` : ""}
     ${shown ? feedback(q, mine, o, true) : ""}
     <div class="small muted" style="text-align:center;margin-top:18px">${esc(q.orig ? "שאלה מקורית" : q.src)}</div>`;
   // one primary action, context-dependent
   let primary;
-  if (hideOpts) primary = `<button class="btn" onclick="reveal()">הצג תשובות</button>`;
+  const askConf = !exam && !shown && mine !== undefined && S.settings.conf;
+  if (askConf) primary = CONF.map(([k, l]) => `<button class="btn ${k === "think" ? "" : "sec"}" style="padding:12px 6px" onclick="check('${k}')">${l}</button>`).join("");
+  else if (hideOpts) primary = `<button class="btn" onclick="reveal()">הצג תשובות</button>`;
   else if (!exam && !shown && mine !== undefined && !S.settings.conf) primary = `<button class="btn" onclick="check()">בדיקה</button>`;
   else if (!exam && !shown) primary = `<button class="btn" disabled>${mine === undefined ? "בחרו תשובה" : "דרגו ביטחון"}</button>`;
   else if (c.i < c.ids.length - 1) primary = `<button class="btn" onclick="move(1)">הבאה</button>`;
   else primary = `<button class="btn" onclick="finish()">${exam ? "הגשה" : "סיום"}</button>`;
-  $("#actions").innerHTML = `<div class="actions"><div class="wrap">
-    <button class="icon" onclick="move(-1)" ${c.i === 0 ? "disabled style='opacity:.3'" : ""} aria-label="הקודמת">→</button>${primary}</div></div>`;
+  $("#actions").innerHTML = `<div class="actions">${askConf ? `<div class="small muted" style="text-align:center;margin-bottom:6px">כמה אתם בטוחים בתשובה?</div>` : ""}<div class="wrap">
+    ${askConf ? "" : `<button class="icon" onclick="move(-1)" ${c.i === 0 ? "disabled style='opacity:.3'" : ""} aria-label="הקודמת">→</button>`}${primary}</div></div>`;
   if (exam){
     const upd = () => { const ms = c.end - Date.now(), el = $("#timer"); if (!el) return clearInterval(tick);
       if (ms <= 0){ clearInterval(tick); finish(true); return; }
       el.textContent = `${Math.floor(ms / 60e3)}:${String(Math.floor(ms / 1e3) % 60).padStart(2, "0")}`; el.style.color = ms < 10 * 60e3 ? "var(--bad)" : ""; };
     upd(); tick = setInterval(upd, 1000);
   }
-  window.scrollTo({top:0});
+  const qKey = c.started + ":" + c.i;
+  if (qKey !== lastQ) window.scrollTo({top:0});
+  lastQ = qKey;
 }
+let lastQ = "";
 function feedback(q, mine, o, live){
   const ok = mine === q.a, pos = i => LET[o.indexOf(i)], r = S.q[q.id], note = r?.note;
   const others = q.ww.map((w, i) => (i === q.a || i === mine || !w) ? "" : `<div class="other"><b>${pos(i)}.</b> ${esc(w)}</div>`).join("");
@@ -492,14 +501,14 @@ function feedback(q, mine, o, live){
     ${q.old ? `<div class="tip">⚠️ ${esc(q.oldNote)}</div>` : ""}
     ${note ? `<div class="tip" style="background:var(--brand-soft)">✍️ ${esc(note)}</div>` : ""}
     ${others ? `<details><summary>שאר התשובות</summary>${others}</details>` : ""}
-    ${live && !ok ? `<details><summary>ניתוח הטעות</summary>
+    ${live && !ok ? `<details id="ana"><summary>ניתוח הטעות</summary>
       <div class="chips" style="margin-top:6px">${CAUSES.map(([k, l]) => `<button class="chip ${r.cause === k ? "on" : ""}" onclick="setCause('${q.id}','${k}')">${l}</button>`).join("")}</div>
       ${r.cause ? `<div class="small muted" style="margin-top:8px">${CAUSE_TIP[r.cause]}</div>` : ""}
       <textarea rows="2" placeholder="הכלל במילים שלכם (יוצג בפעם הבאה)" onchange="st('${q.id}').note=this.value;save()">${esc(note || "")}</textarea></details>` : ""}
   </div>`;
 }
 function setCause(id, k){ const r = st(id); if (r.cause) S.causes[r.cause] = Math.max(0, (S.causes[r.cause] || 1) - 1);
-  r.cause = k; S.causes[k] = (S.causes[k] || 0) + 1; save(); renderQuiz(); document.querySelectorAll(".fb details")[1]?.setAttribute("open", ""); }
+  r.cause = k; S.causes[k] = (S.causes[k] || 0) + 1; save(); renderQuiz(); $("#ana")?.setAttribute("open", ""); }
 function pick(oi){ const c = S.cur, id = c.ids[c.i]; if (c.done[id] !== undefined) return; c.ans[id] = oi; save(); renderQuiz(); }
 function check(conf){ const c = S.cur, id = c.ids[c.i]; if (c.ans[id] === undefined || c.done[id] !== undefined) return;
   c.conf[id] = conf || "think"; c.done[id] = record(id, c.ans[id], conf) ? 1 : 0; save(); renderQuiz(); }
@@ -509,9 +518,10 @@ function toggleFlag(){ const c = S.cur, id = c.ids[c.i]; c.flag[id] = !c.flag[id
   if (c.flag[id]) S.flags[id] = Date.now(); else delete S.flags[id]; save(); renderQuiz(); }
 function mapSheet(){
   const c = S.cur, d = document.createElement("div"); d.className = "sheet";
-  d.innerHTML = `<div><div class="row" style="justify-content:space-between;margin-bottom:14px"><b>מפת שאלות</b><span class="small muted">${Object.keys(c.ans).length}/${c.ids.length} נענו · ★ מסומנות</span></div>
-    <div class="grid5">${c.ids.map((x, k) => `<button class="dot ${c.ans[x] !== undefined ? "ans" : ""} ${c.flag[x] ? "flag" : ""} ${k === c.i ? "cur" : ""}" data-k="${k}">${k + 1}</button>`).join("")}</div></div>`;
-  d.onclick = e => { const k = e.target.dataset?.k; if (k !== undefined){ c.i = +k; save(); renderQuiz(); } if (k !== undefined || e.target === d) d.remove(); };
+  d.innerHTML = `<div><div class="row" style="justify-content:space-between;margin-bottom:14px"><b>מפת שאלות</b><span class="small muted">${Object.keys(c.ans).length}/${c.ids.length} נענו · <span style="border-bottom:3px solid var(--warn)">מסומנת</span></span></div>
+    <div class="grid5">${c.ids.map((x, k) => `<button class="dot ${c.ans[x] !== undefined ? "ans" : ""} ${c.flag[x] ? "flag" : ""} ${k === c.i ? "cur" : ""}" data-k="${k}">${k + 1}</button>`).join("")}</div>
+    <button class="btn sec" style="margin-top:16px" data-close="1">סגירה</button></div>`;
+  d.onclick = e => { const k = e.target.dataset?.k; if (k !== undefined){ c.i = +k; save(); renderQuiz(); } if (k !== undefined || e.target === d || e.target.dataset?.close) d.remove(); };
   document.body.appendChild(d);
 }
 function quit(){
@@ -658,8 +668,12 @@ function view_learn(sub, arg){
     if (!nums.length) return `<div class="empty">אין כרטיסיות.</div>`;
     fcDeck ??= nums.map((_, i) => i).sort((a, b) => (S.fc[b] || 0) - (S.fc[a] || 0) || Math.random() - .5);
     const f = nums[fcDeck[fcI % fcDeck.length]];
-    return `<div class="card flash" onclick="fcFlip=!fcFlip;view_learn('flash')"><div>${esc(f.fact)}
-        ${fcFlip ? `<div class="small muted" style="margin-top:14px">${esc(f.law)}</div>` : `<div class="small muted" style="margin-top:14px">הקישו לחשיפת המקור</div>`}</div></div>
+    // Front hides the numbers (days, %, amounts) so the card tests recall; tap reveals them and the source.
+    const NUM = /\d[\d,.]*\s*%?/g, masked = NUM.test(f.fact);
+    const front = esc(f.fact).replace(NUM, '<span style="display:inline-block;min-width:2.2em;border-bottom:2px solid var(--brand)">&nbsp;?&nbsp;</span>');
+    const back = esc(f.fact).replace(NUM, m => `<b style="color:var(--brand)">${m}</b>`);
+    return `<div class="card flash" onclick="fcFlip=!fcFlip;view_learn('flash')"><div>${fcFlip || !masked ? back : front}
+        <div class="small muted" style="margin-top:14px">${fcFlip ? esc(f.law) : masked ? "מה המספר? הקישו לחשיפה" : "הקישו לחשיפת המקור"}</div></div></div>
       <div class="row" style="margin-top:14px"><button class="btn sec" onclick="fcMark(1)">לא ידעתי</button><button class="btn" onclick="fcMark(-1)">ידעתי</button></div>
       <p class="small muted" style="text-align:center">${fcI % fcDeck.length + 1} / ${fcDeck.length} · היום ${S.fcDays[today()] || 0}</p>`;
   });
@@ -703,7 +717,7 @@ function view_settings(){
       ${item("⬇️", "הורדת גיבוי", "ההתקדמות נשמרת רק בדפדפן הזה", "", "exportData()")}
       <label class="item" style="cursor:pointer"><span class="ic">⬆️</span><span class="tx"><div class="t">שחזור מגיבוי</div></span><span class="chev"></span><input type="file" accept=".json" hidden onchange="importData(this.files[0])"></label>
       ${item("🗑", `<span style="color:var(--bad)">איפוס התקדמות</span>`, "", "", "if(confirm('למחוק את כל ההתקדמות? אי אפשר לבטל.')){S=defaults();save();go('home')}", false)}</div>
-    <p class="small muted" style="margin:16px 4px">${QB.questions.length} שאלות · ${QB.exams.length} מבחנים רשמיים · ${QB.questions.filter(q => q.orig).length} מקוריות · עודכן ${QB.built || ""}</p>`);
+    <p class="small muted" style="margin:16px 4px">${QB.questions.length} שאלות · ${QB.exams.length} מבחנים רשמיים · ${QB.questions.filter(q => q.orig).length} מקוריות · עודכן <bdi>${fmt(QB.built)}</bdi></p>`);
 }
 function exportData(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type:"application/json"}));
   a.download = `broker-exam-backup-${today()}.json`; a.click(); }
