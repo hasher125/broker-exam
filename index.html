@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מתווך 100</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="מתווך 100">
+<meta name="theme-color" content="#2450d6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f5f2; --card:#ffffff; --ink:#1c1d21; --muted:#74767d; --line:#ebeae5; --soft:#f0efea;
+  --brand:#2450d6; --brand-ink:#fff; --brand-soft:#e9eefc;
+  --ok:#13804a; --ok-soft:#e5f5eb; --bad:#c0362c; --bad-soft:#fcebe9; --warn:#a15c00; --warn-soft:#fff4dc;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111215; --card:#1a1b1f; --ink:#ececee; --muted:#9b9da4; --line:#2a2b31; --soft:#222328;
+  --brand:#7598ff; --brand-ink:#0c0f1c; --brand-soft:#1d2440;
+  --ok:#5dd28c; --ok-soft:#14301f; --bad:#ff8b80; --bad-soft:#371b19; --warn:#ffc25a; --warn-soft:#352a12;}}
+:root[data-theme="dark"]{
+  --bg:#111215; --card:#1a1b1f; --ink:#ececee; --muted:#9b9da4; --line:#2a2b31; --soft:#222328;
+  --brand:#7598ff; --brand-ink:#0c0f1c; --brand-soft:#1d2440;
+  --ok:#5dd28c; --ok-soft:#14301f; --bad:#ff8b80; --bad-soft:#371b19; --warn:#ffc25a; --warn-soft:#352a12;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Heebo,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.55}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0;touch-action:manipulation}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+/* top bar */
+.top{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)}
+.top .wrap{display:flex;align-items:center;gap:10px;height:56px}
+.top h1{font-size:19px;font-weight:800;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top h1 b{color:var(--brand)}
+.icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:19px;color:var(--muted)}
+.icon:hover{background:var(--soft)}
+main{padding-bottom:110px}
+
+/* bottom tabs */
+.tabs{position:fixed;bottom:0;inset-inline:0;z-index:6;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:62px}
+.tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--muted);font-weight:500}
+.tabs button svg{width:22px;height:22px}
+.tabs button.on{color:var(--brand)}
+
+/* building blocks */
+.sec-title{font-size:13px;font-weight:700;color:var(--muted);margin:22px 4px 8px}
+.card{background:var(--card);border-radius:16px;padding:18px}
+.list{background:var(--card);border-radius:16px;overflow:hidden}
+.item{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;text-align:start;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+button.item:hover{background:var(--soft)}
+.item .ic{flex:0 0 36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:18px;background:var(--soft)}
+.item .tx{flex:1;min-width:0}
+.item .t{font-weight:600}
+.item .s{font-size:13px;color:var(--muted)}
+.item .end{color:var(--muted);font-size:14px;white-space:nowrap}
+.chev::after{content:"‹";font-size:22px;color:var(--muted);line-height:1}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--soft);color:var(--muted)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.brand{background:var(--brand-soft);color:var(--brand)}
+.btn{display:block;width:100%;background:var(--brand);color:var(--brand-ink);border-radius:14px;padding:14px 18px;font-weight:700;font-size:16px;text-align:center}
+.btn.sec{background:var(--soft);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;align-items:center}
+.muted{color:var(--muted)} .small{font-size:13px}
+.meter{height:6px;background:var(--soft);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--brand);border-radius:99px}
+.seg{display:flex;background:var(--soft);border-radius:12px;padding:3px;margin:8px 0 4px}
+.seg button{flex:1;padding:8px 4px;border-radius:9px;font-size:14px;font-weight:500;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:6px 13px;font-size:14px;background:var(--card);border:1px solid var(--line)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.empty{text-align:center;padding:36px 16px;color:var(--muted)}
+details>summary{cursor:pointer;list-style:none;font-weight:600;color:var(--brand);padding:6px 0}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"+ ";} details[open]>summary::before{content:"− ";}
+
+/* home */
+.hero{display:flex;align-items:center;gap:18px}
+.ring{flex:0 0 96px}
+.ring text{font-family:inherit}
+.hero .k{font-size:13px;color:var(--muted)}
+.hero .v{font-size:22px;font-weight:800}
+.check{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px}
+.check.done{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* quiz */
+.qbar{height:4px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:-4px}
+.qbar i{display:block;height:100%;background:var(--brand);transition:width .25s}
+.qmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 10px}
+.qtext{font-size:19px;font-weight:500;white-space:pre-wrap;line-height:1.6}
+.qtext mark{background:var(--warn-soft);color:inherit;font-weight:700;border-radius:4px;padding:0 2px}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:start;background:var(--card);border:1.5px solid transparent;border-radius:14px;padding:14px;font-size:16.5px;width:100%}
+.opt .k{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:700;font-size:14px}
+.opt:hover:not(:disabled){border-color:var(--line)}
+.opt.sel{border-color:var(--brand)} .opt.sel .k{background:var(--brand);color:var(--brand-ink)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)} .opt.ok .k{background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)} .opt.bad .k{background:var(--bad);color:#fff}
+.opt.dim{opacity:.55}
+.opt:disabled{cursor:default}
+.conf{margin-top:18px}
+.conf .lbl{font-size:13px;color:var(--muted);margin-bottom:6px;text-align:center}
+.fb{margin-top:18px;background:var(--card);border-radius:16px;padding:16px}
+.fb .verdict{font-weight:800;font-size:17px;margin-bottom:10px}
+.fb p{margin:0 0 10px}
+.fb .lab{font-size:13px;font-weight:700;color:var(--muted);display:block;margin-bottom:2px}
+.fb .law{font-size:13px;color:var(--muted)}
+.fb .tip{background:var(--warn-soft);border-radius:10px;padding:9px 12px;font-size:14.5px;margin:10px 0 4px}
+.fb details{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}
+.fb .other{margin:6px 0 10px;font-size:15px}
+textarea{width:100%;font:inherit;margin-top:8px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical}
+.actions{position:fixed;bottom:0;inset-inline:0;z-index:6;background:var(--card);border-top:1px solid var(--line);padding:10px 0 calc(10px + env(safe-area-inset-bottom))}
+.actions .wrap{display:flex;gap:10px}
+.actions .btn{flex:1}
+.actions .icon{flex:0 0 50px;height:50px;border-radius:14px;background:var(--soft);color:var(--ink)}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:15px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.dot{height:42px;border-radius:10px;background:var(--soft);font-weight:700}
+.dot.ans{background:var(--brand-soft);color:var(--brand)} .dot.flag{box-shadow:inset 0 -3px 0 var(--warn)} .dot.cur{outline:2px solid var(--brand)}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:var(--card);width:100%;max-width:640px;border-radius:20px 20px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto}
+
+/* misc */
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stats3 .card{padding:14px;text-align:center}
+.stats3 .n{font-size:24px;font-weight:800}
+.stats3 .l{font-size:12px;color:var(--muted)}
+.notes{font-size:15.5px}
+.notes h4{margin:18px 0 6px;font-size:16px} .notes h4:first-child{margin-top:0}
+.notes ul,.notes ol{padding-inline-start:20px;margin:6px 0}
+.notes li{margin:3px 0}
+.notes table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}
+.notes td,.notes th{border:1px solid var(--line);padding:6px 8px;text-align:start;vertical-align:top}
+.flash{min-height:220px;display:grid;place-items:center;text-align:center;font-size:20px;font-weight:500;cursor:pointer;padding:24px}
+.switch{position:relative;width:46px;height:28px;flex:0 0 46px}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:var(--line);border-radius:99px;transition:.2s;cursor:pointer}
+.switch span::before{content:"";position:absolute;width:22px;height:22px;top:3px;inset-inline-start:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+span{background:var(--brand)}
+.switch input:checked+span::before{transform:translateX(-18px)}
+input[type=date],input[type=number],select{font:inherit;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.toast{position:fixed;bottom:84px;inset-inline:16px;z-index:30;max-width:420px;margin:auto;background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 16px;text-align:center}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap" id="top"></div></header>
+<main><div class="wrap" id="app"></div></main>
+<nav class="tabs" id="tabs"><div class="wrap"></div></nav>
+<div id="actions"></div>
+<script src="data/bank.js"></script>
+<script>
+"use strict";
+const QB = window.QB || {questions:[],exams:[],notes:[],numbers:[],topics:[],weights:{}};
+const LET = ["א","ב","ג","ד"];
+const DAY = 864e5;
+const KEY = "broker-exam-v1";
+const byId = Object.fromEntries(QB.questions.map(q => [q.id, q]));
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const today = () => new Date().toISOString().slice(0, 10);
+const fmt = d => d ? d.split("-").reverse().join(".") : "";
+// Inline handlers receive data through this registry instead of serialising arrays into HTML attributes.
+const ACT = []; const act = fn => { ACT.push(fn); return `ACT[${ACT.length - 1}]()`; };
+
+/* ---------- state ---------- */
+function defaults(){ return {q:{}, sessions:[], flags:{}, activity:{}, cur:null, fc:{}, fcDays:{}, calib:{}, causes:{},
+  settings:{examDate:"", outdated:false, shuffle:false, perSession:20, theme:"", recall:false, conf:true}}; }
+let S;
+try { S = Object.assign(defaults(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = defaults(); }
+S.settings = Object.assign(defaults().settings, S.settings);
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) { console.warn(e); } }
+function applyTheme(){ if (S.settings.theme) document.documentElement.dataset.theme = S.settings.theme; else delete document.documentElement.dataset.theme; }
+applyTheme();
+
+const active = () => QB.questions.filter(q => S.settings.outdated || !q.old);
+const st = id => S.q[id] || (S.q[id] = {a:0, c:0, s:0, due:0, w:0, last:0, hist:[]});
+// Mastered = two correct answers in a row, the last one not a guess.
+const isMastered = id => { const r = S.q[id]; return !!r && r.s >= 2 && (r.g || 3) >= 3; };
+const isMistake = id => { const r = S.q[id]; return !!r && r.w > 0 && !isMastered(id); };
+
+/* FSRS-4.5 spaced-repetition scheduler (default weights). Grade: 1 again, 2 hard, 3 good, 4 easy.
+   Grade comes from correctness + the confidence the learner declared before seeing the answer. */
+const FW = [0.4872,1.4003,3.7145,13.8206,5.1618,1.2298,0.8975,0.031,1.6474,0.1367,1.0461,2.1072,0.0793,0.3246,1.587,0.2272,2.8755];
+const DECAY = -0.5, FACTOR = 19 / 81;
+const clampD = d => Math.min(10, Math.max(1, d));
+function fsrs(r, g){
+  const now = Date.now();
+  if (!r.S){ r.S = FW[g - 1]; r.D = clampD(FW[4] - (g - 3) * FW[5]); }
+  else {
+    const t = Math.max(0, (now - (r.rev || now)) / DAY), R = Math.pow(1 + FACTOR * t / r.S, DECAY);
+    r.D = clampD(FW[7] * (FW[4] - FW[5]) + (1 - FW[7]) * (r.D - FW[6] * (g - 3)));
+    r.S = g === 1 ? Math.min(r.S, FW[11] * Math.pow(r.D, -FW[12]) * (Math.pow(r.S + 1, FW[13]) - 1) * Math.exp(FW[14] * (1 - R)))
+      : r.S * (Math.exp(FW[8]) * (11 - r.D) * Math.pow(r.S, -FW[9]) * (Math.exp(FW[10] * (1 - R)) - 1) * (g === 2 ? FW[15] : 1) * (g === 4 ? FW[16] : 1) + 1);
+  }
+  r.rev = now;
+  let days = r.S;                                           // interval at 90% target retention == stability
+  const dl = daysLeft();
+  if (dl) days = Math.min(days, Math.max(1, (dl - 1) / 2)); // exam-aware: every item comes back at least once more before the exam
+  r.due = g === 1 ? now + 10 * 60e3 : now + Math.max(.5, days) * DAY;
+}
+const CONF = [["guess","מנחש",2],["think","חושב שכן",3],["sure","בטוח",4]];
+function record(id, choice, conf = "think"){
+  const q = byId[id], r = st(id), ok = choice === q.a;
+  r.a++; r.last = Date.now(); r.hist.push(ok ? 1 : 0); if (r.hist.length > 10) r.hist.shift();
+  const g = ok ? CONF.find(c => c[0] === conf)[2] : 1;
+  if (ok){ r.c++; r.s++; } else { r.s = 0; r.w++; r.lastWrong = choice; r.hc = conf === "sure"; }
+  r.g = g; fsrs(r, g);
+  const cal = (S.calib[conf] ||= [0, 0]); cal[1]++; if (ok) cal[0]++;
+  S.activity[today()] = (S.activity[today()] || 0) + 1;
+  return ok;
+}
+
+/* ---------- analytics ---------- */
+function topicStats(){
+  const out = {};
+  for (const t of QB.topics) out[t] = {t, total:0, seen:0, mast:0, mis:0, corr:0};
+  for (const q of active()){
+    const o = out[q.topic]; if (!o) continue; o.total++;
+    const r = S.q[q.id]; if (!r || !r.a) continue;
+    o.seen++; if (r.hist[r.hist.length - 1]) o.corr++;
+    if (isMastered(q.id)) o.mast++; if (isMistake(q.id)) o.mis++;
+  }
+  return Object.values(out).filter(o => o.total);
+}
+// Expected exam score: smoothed accuracy of latest attempts per topic, weighted by how often the topic appears in real exams.
+// Unseen material is discounted toward a 25% guess, so the score only climbs by actually covering material.
+function predicted(){
+  let sum = 0, wsum = 0;
+  for (const o of topicStats()){
+    const w = QB.weights[o.t] || 0; if (!w) continue;
+    const accSeen = o.seen ? (o.corr + 1) / (o.seen + 2) : .25, cover = o.seen / o.total;
+    sum += w * (cover * accSeen + (1 - cover) * (accSeen * .5 + .125)); wsum += w;
+  }
+  return wsum ? Math.round(100 * sum / wsum) : 0;
+}
+function daysLeft(){ if (!S.settings.examDate) return null; return Math.max(0, Math.ceil((new Date(S.settings.examDate) - new Date(today())) / DAY)); }
+function streakDays(){ let n = 0, d = new Date(); if (!S.activity[today()]) d = new Date(Date.now() - DAY);
+  while (S.activity[d.toISOString().slice(0, 10)]) { n++; d = new Date(d - DAY); } return n; }
+
+/* ---------- question picking ---------- */
+function weakestTopics(n){
+  return topicStats().map(o => ({t:o.t, score: (o.seen ? (o.corr + 1) / (o.seen + 2) : .4) - (QB.weights[o.t] || 0)}))
+    .sort((a, b) => a.score - b.score).slice(0, n).map(x => x.t);
+}
+function smartSet(n){
+  const pool = active(), now = Date.now(), picked = new Set();
+  const add = arr => { for (const q of arr){ if (picked.size >= n) break; picked.add(q.id); } };
+  add(shuffle(pool.filter(q => S.q[q.id]?.hc && isMistake(q.id) && S.q[q.id].due <= now)));  // confident errors relapse most: first
+  add(shuffle(pool.filter(q => isMistake(q.id) && S.q[q.id].due <= now)));                   // due mistakes
+  add(shuffle(pool.filter(q => S.q[q.id]?.a && S.q[q.id].due <= now)).slice(0, Math.ceil(n * .3))); // spaced review
+  const weak = new Set(weakestTopics(4));
+  add(shuffle(pool.filter(q => !S.q[q.id]?.a && weak.has(q.topic))).slice(0, Math.ceil(n * .4)));
+  add(weightedUnseen(pool, n));
+  add(shuffle(pool));
+  return shuffle([...picked]);                                                                // interleaved topics
+}
+function weightedUnseen(pool, n){
+  const byT = {};
+  for (const q of pool) if (!S.q[q.id]?.a) (byT[q.topic] ||= []).push(q);
+  const out = [];
+  for (const t in byT) out.push(...shuffle(byT[t]).slice(0, Math.round(n * (QB.weights[t] || .01)) + 1));
+  return shuffle(out);
+}
+// Simulation: 25 questions in proportion to real exam topic weights.
+function simSet(){
+  const pool = active().filter(q => !q.orig || Math.random() < .35), byT = {}, out = [];
+  for (const q of pool) (byT[q.topic] ||= []).push(q);
+  for (const t of Object.keys(byT)) out.push(...shuffle(byT[t]).slice(0, Math.round(25 * (QB.weights[t] || 0))));
+  const rest = shuffle(pool.filter(q => !out.includes(q)));
+  while (out.length < 25 && rest.length) out.push(rest.pop());
+  return shuffle(out).slice(0, 25).map(q => q.id);
+}
+const mistakeIds = () => shuffle(active().filter(q => isMistake(q.id)).map(q => q.id));
+
+/* ---------- session engine ---------- */
+// mode: learn (instant feedback) | exam (timer, feedback at end)
+function start(title, ids, mode = "learn", extra = {}){
+  if (!ids.length){ toast("אין שאלות להצגה כאן."); return; }
+  const order = {};
+  if (S.settings.shuffle) for (const id of ids) if (canShuffle(byId[id])) order[id] = shuffle([0, 1, 2, 3]);
+  S.cur = {title, ids, mode, i:0, ans:{}, done:{}, conf:{}, flag:{}, rev:{}, order, started:Date.now(),
+    end: mode === "exam" ? Date.now() + (extra.minutes || 120) * 60e3 : 0, kind: extra.kind || mode};
+  save(); go("quiz");
+}
+// Options that refer to other options by letter can't be reordered.
+const canShuffle = q => !q.o.some(o => /(^|[\s"'(])[אבגד]['׳]?(\s|$|[,.)\-])|תשובות|התשובות|כל ה|אף אחת|אף לא/.test(o));
+const ord = (c, id) => c.order[id] || [0, 1, 2, 3];
+
+// Exam trap words (negations, absolutes) are highlighted so the learner trains to notice them.
+const TRAP = /(^|[^א-ת])([ושהכ]?(?:אינה|אינו|אינם|אינן|איננה|איננו|לא|אין|שגויה|שגוי|השגויה|למעט|פרט ל|בלבד|אסור|תמיד|לעולם|רק|אלא אם))(?=[^א-ת]|$)/g;
+const hl = s => esc(s).replace(TRAP, "$1<mark>$2</mark>");
+const CAUSES = [["rule","לא ידעתי את הכלל"],["read","קראתי לא נכון"],["mix","בלבול בין כללים דומים"],["num","מספר / מועד"],["guess","ניחשתי"]];
+const CAUSE_TIP = {rule:"קראו את סיכום הנושא בלשונית לימוד, ואז תרגלו אותו בנפרד.", read:"קראו את השאלה פעמיים; מילות שלילה מסומנות בצהוב.",
+  mix:"כתבו במשפט אחד מה ההבדל בין שני הכללים.", num:"10 דקות כרטיסיות מספרים ביום.", guess:"השאלה תחזור אליכם בחזרה המרווחת."};
+
+/* ---------- shell ---------- */
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  practice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  progress:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  learn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v16H5.5A1.5 1.5 0 0 0 4 20.5zM4 20.5A1.5 1.5 0 0 0 5.5 22H20"/></svg>'};
+const TABS = [["home","בית"],["practice","תרגול"],["progress","התקדמות"],["learn","לימוד"]];
+
+function go(path){ const h = "#/" + path; if (location.hash !== h) location.hash = h; else route(); }
+function toast(msg){ const d = document.createElement("div"); d.className = "toast"; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+// title: string for a sub-page (shows back arrow), null for a root tab (shows brand).
+function shell(title, back, tab, body){
+  ACT.length = 0;
+  $("#top").innerHTML = (title ? `<button class="icon" onclick="${back ? `go('${back}')` : "history.back()"}" aria-label="חזרה">→</button><h1>${esc(title)}</h1>`
+    : `<h1>מתווך <b>100</b></h1>`) + `<button class="icon" onclick="go('settings')" aria-label="הגדרות">⚙</button>`;
+  $("#tabs").style.display = ""; $("#actions").innerHTML = "";
+  $("#tabs .wrap").innerHTML = TABS.map(([k, l]) => `<button class="${k === tab ? "on" : ""}" onclick="go('${k}')">${ICONS[k]}${l}</button>`).join("");
+  $("#app").innerHTML = typeof body === "function" ? body() : body;
+  window.scrollTo({top:0});
+}
+let tick = null;
+function route(){
+  clearInterval(tick);
+  const [v, a, b] = location.hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
+  if (v === "quiz") return renderQuiz();
+  const fn = {home:view_home, practice:view_practice, progress:view_progress, learn:view_learn, settings:view_settings}[v] || view_home;
+  fn(a, b);
+}
+window.addEventListener("hashchange", route);
+const item = (ic, t, s, end, onclick, chev = true) =>
+  `<${onclick ? `button onclick="${onclick}"` : "div"} class="item">${ic ? `<span class="ic">${ic}</span>` : ""}<span class="tx"><div class="t">${t}</div>${s ? `<div class="s">${s}</div>` : ""}</span>
+   ${end ? `<span class="end">${end}</span>` : ""}${onclick && chev ? `<span class="chev"></span>` : ""}</${onclick ? "button" : "div"}>`;
+function ring(v, size = 96){
+  const r = 40, c = 2 * Math.PI * r, col = v >= 85 ? "var(--ok)" : v >= 60 ? "var(--warn)" : "var(--bad)";
+  return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${v}">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--soft)" stroke-width="9"/>
+    ${v > 0 ? `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c * v / 100} ${c}" transform="rotate(-90 50 50)"/>` : ""}
+    <text x="50" y="57" text-anchor="middle" font-size="24" font-weight="800" fill="var(--ink)">${v}</text></svg>`;
+}
+
+/* ---------- HOME ---------- */
+/* Daily plan, phased by days to exam: diagnose -> build (cover + spaced retrieval) -> strengthen (timed past exams)
+   -> polish (full simulations, confident errors, numbers). Each task self-checks from today's activity. */
+function plan(){
+  const dl = daysLeft() ?? 21, all = active(), t0 = new Date(today()).getTime();
+  const todays = S.sessions.filter(s => s.date >= t0), did = S.activity[today()] || 0;
+  const unseen = all.filter(q => !S.q[q.id]?.a).length, mis = all.filter(q => isMistake(q.id)).length;
+  const due = all.filter(q => isMistake(q.id) && S.q[q.id].due <= Date.now()).length;
+  const target = dl > 4 ? Math.max(30, Math.ceil((unseen + mis) / Math.max(1, dl - 4))) : 25;
+  const weak = weakestTopics(1)[0];
+  const doneExams = new Set(S.sessions.filter(s => s.kind === "past").map(s => s.title));
+  const nextExam = QB.exams.find(e => !doneExams.has("מבחן " + fmt(e.date)));
+  const phase = dl <= 1 ? "יום לפני" : dl <= 4 ? "ליטוש" : dl <= 10 ? "חיזוק" : "בנייה";
+  const T = [], task = (t, s, done, fn) => T.push({t, s, done, fn});
+  if (!S.sessions.some(s => s.kind === "exam" || s.kind === "past"))
+    task("מבחן אבחון", "25 שאלות כדי למפות את נקודות החולשה", false, () => start("מבחן אבחון", simSet(), "exam", {kind:"exam"}));
+  if (dl <= 1) task("חזרה קלה בלבד", "הטעויות שעניתם עליהן 'בטוח'. בלי חומר חדש, ולישון מוקדם.", false,
+    () => start("טעויות בביטחון", active().filter(q => S.q[q.id]?.hc).map(q => q.id)));
+  else {
+    task(`${target} שאלות`, `${did} נענו היום`, did >= target, () => start("תרגול חכם", smartSet(S.settings.perSession)));
+    if (due || mis) task("לסגור טעויות", due ? `${due} ממתינות לחזרה` : "אין טעויות לחזרה כרגע", due === 0, () => start("הטעויות שלי", mistakeIds()));
+    if (phase === "בנייה" && weak) task("נושא חלש", weak, todays.some(s => s.title === weak), () => go("learn/t/" + encodeURIComponent(weak)));
+    if (phase === "חיזוק" && nextExam) task("מבחן קודם עם שעון", fmt(nextExam.date), todays.some(s => s.kind === "past"),
+      () => start("מבחן " + fmt(nextExam.date), nextExam.ids, "exam", {kind:"past"}));
+    if (phase === "ליטוש") task("סימולציה מלאה", "שעתיים, בתנאי בחינה", todays.some(s => s.kind === "exam" || s.kind === "past"), () => start("סימולציה", simSet(), "exam", {kind:"exam"}));
+  }
+  task("כרטיסיות", "20 מספרים ומועדים", (S.fcDays[today()] || 0) >= 20, () => go("learn/flash"));
+  return {T, phase};
+}
+function view_home(){
+  shell(null, null, "home", () => {
+    if (!QB.questions.length) return `<div class="empty">מאגר השאלות לא נטען.</div>`;
+    const all = active(), mast = all.filter(q => isMastered(q.id)).length, dl = daysLeft(), {T, phase} = plan();
+    const next = T.find(t => !t.done);
+    return `
+    ${S.cur ? `<div class="list" style="margin-top:8px">${item("▶", "להמשיך מאיפה שעצרתם", `${esc(S.cur.title)} · ${Object.keys(S.cur.ans).length}/${S.cur.ids.length}`, "", "go('quiz')")}</div>` : ""}
+    <div class="card hero" style="margin-top:12px">${ring(predicted())}
+      <div><div class="k">ציון צפוי בבחינה</div>
+        <div class="v" style="font-size:16px;font-weight:600;margin-top:4px">${mast} / ${all.length} <span class="muted small">שאלות נשלטו</span></div>
+        <div class="small muted" style="margin-top:2px">${dl === null ? `<a href="#/settings" style="color:var(--brand)">קבעו תאריך בחינה</a>` : `${dl} ימים לבחינה`} · רצף ${streakDays()} ימים</div></div></div>
+    ${next ? `<button class="btn" style="margin-top:14px" onclick="${act(next.fn)}">${esc(next.t)}<div style="font-weight:400;font-size:13px;opacity:.85">${esc(next.s)}</div></button>`
+      : `<div class="card" style="margin-top:14px;text-align:center">✅ סיימתם את התוכנית של היום</div>`}
+    <div class="sec-title">היום · שלב ${phase}</div>
+    <div class="list">${T.map(t => `<button class="item" onclick="${act(t.fn)}"><span class="check ${t.done ? "done" : ""}">${t.done ? "✓" : ""}</span>
+      <span class="tx"><div class="t" style="${t.done ? "color:var(--muted);text-decoration:line-through" : ""}">${esc(t.t)}</div><div class="s">${esc(t.s)}</div></span><span class="chev"></span></button>`).join("")}</div>`;
+  });
+}
+
+/* ---------- PRACTICE ---------- */
+let pStatus = "all", openExam = null;
+function view_practice(sub){
+  if (sub === "topics") return shell("לפי נושא", "practice", "practice", () => {
+    const ts = topicStats().sort((a, b) => (QB.weights[b.t] || 0) - (QB.weights[a.t] || 0));
+    const pool = t => active().filter(q => q.topic === t && (pStatus === "all" || (pStatus === "unseen" && !S.q[q.id]?.a) || (pStatus === "wrong" && isMistake(q.id))));
+    return `<div class="seg">${[["all","הכול"],["unseen","שלא נענו"],["wrong","טעויות"]].map(([k, l]) =>
+      `<button class="${pStatus === k ? "on" : ""}" onclick="pStatus='${k}';view_practice('topics')">${l}</button>`).join("")}</div>
+      <div class="list" style="margin-top:12px">${ts.map(o => { const n = pool(o.t).length;
+        return item(`<b style="font-size:13px">${Math.round(100 * (QB.weights[o.t] || 0))}%</b>`, esc(o.t),
+          `${n} שאלות${o.seen ? ` · דיוק ${pct(o.corr, o.seen)}%` : ""}`, "",
+          n ? act(() => start(o.t, shuffle(pool(o.t).map(q => q.id)).sort((x, y) => isMastered(x) - isMastered(y)).slice(0, 20))) : ""); }).join("")}</div>
+      <p class="small muted" style="margin:10px 4px">האחוז = משקל הנושא במבחנים האמיתיים. כל לחיצה: עד 20 שאלות, קודם אלה שעוד לא נשלטו.</p>`;
+  });
+  if (sub === "exams") return shell("מבחנים קודמים", "practice", "practice", () => {
+    const best = {};
+    for (const s of S.sessions) if (s.kind === "past") best[s.title] = Math.max(best[s.title] ?? 0, s.score);
+    return `<p class="small muted" style="margin:6px 4px 12px">${QB.exams.length} מבחנים רשמיים של רשם המתווכים, בסדר המקורי.</p>
+    <div class="list">${QB.exams.map((e, i) => { const t = "מבחן " + fmt(e.date), b = best[t];
+      return item("📄", fmt(e.date), b === undefined ? "טרם נפתר" : "ציון הכי טוב", b === undefined ? "" : `<span class="pill ${b >= 60 ? "ok" : "bad"}">${b}</span>`,
+        `openExam=openExam===${i}?null:${i};view_practice('exams')`) +
+      (openExam === i ? `<div class="item" style="gap:8px;background:var(--soft)">
+        <button class="btn" style="padding:10px" onclick="${act(() => start(t, e.ids, "exam", {kind:"past"}))}">מבחן עם שעון</button>
+        <button class="btn sec" style="padding:10px;background:var(--card)" onclick="${act(() => start(t + " · לימוד", e.ids, "learn"))}">מצב לימוד</button></div>` : ""); }).join("")}</div>`;
+  });
+  shell(null, null, "practice", () => {
+    const mis = active().filter(q => isMistake(q.id)).length, fl = Object.keys(S.flags).filter(id => byId[id]).length;
+    return `<div class="sec-title">מומלץ</div><div class="list">
+      ${item("🎯", "תרגול חכם", `${S.settings.perSession} שאלות מותאמות אישית, עם הסבר מיידי`, "", act(() => start("תרגול חכם", smartSet(S.settings.perSession))))}
+      ${item("⏱", "סימולציה", "25 שאלות · שעתיים · ציון בסוף", "", act(() => start("סימולציה", simSet(), "exam", {kind:"exam"})))}
+      ${item("🔁", "הטעויות שלי", "חוזרות עד שעונים נכון פעמיים ברצף", mis ? `<span class="pill bad">${mis}</span>` : "", act(() => mis ? start("הטעויות שלי", mistakeIds()) : toast("אין טעויות פתוחות 👏")))}
+    </div>
+    <div class="sec-title">בחירה חופשית</div><div class="list">
+      ${item("📚", "לפי נושא", `${topicStats().length} נושאים`, "", "go('practice/topics')")}
+      ${item("📄", "מבחנים קודמים", `${QB.exams.length} מבחנים רשמיים`, "", "go('practice/exams')")}
+      ${item("★", "שאלות מסומנות", "שסימנתם במהלך תרגול", fl ? `<span class="pill">${fl}</span>` : "", act(() => start("מסומנות", Object.keys(S.flags).filter(id => byId[id]))))}
+    </div>`;
+  });
+}
+
+/* ---------- QUIZ ---------- */
+function renderQuiz(){
+  const c = S.cur; if (!c) return go("home");
+  clearInterval(tick); ACT.length = 0;
+  const id = c.ids[c.i], q = byId[id];
+  if (!q){ c.ids.splice(c.i, 1); if (!c.ids.length){ S.cur = null; save(); return go("home"); } c.i = Math.min(c.i, c.ids.length - 1); save(); return renderQuiz(); }
+  const exam = c.mode === "exam", shown = c.done[id] !== undefined, mine = c.ans[id], o = ord(c, id);
+  const hideOpts = !exam && S.settings.recall && !shown && !c.rev[id];
+  const answered = Object.keys(c.ans).length;
+  $("#tabs").style.display = "none";
+  $("#top").innerHTML = `<button class="icon" onclick="quit()" aria-label="יציאה">✕</button>
+    <h1 style="font-size:15px;font-weight:600">${c.i + 1} <span class="muted">/ ${c.ids.length}</span></h1>
+    ${exam ? `<span class="timer" id="timer"></span><button class="icon" onclick="mapSheet()" aria-label="מפת שאלות">▦</button>` : ""}
+    <button class="icon" onclick="toggleFlag()" aria-label="סימון" style="color:${c.flag[id] ? "var(--warn)" : ""}">${c.flag[id] ? "★" : "☆"}</button>`;
+  const opts = o.map((oi, pos) => {
+    let cls = "";
+    if (shown) cls = oi === q.a ? "ok" : oi === mine ? "bad" : "dim";
+    else if (oi === mine) cls = "sel";
+    return `<button class="opt ${cls}" ${shown ? "disabled" : ""} onclick="pick(${oi})"><span class="k">${LET[pos]}</span><span>${esc(q.o[oi])}</span></button>`;
+  }).join("");
+  const r = S.q[id];
+  $("#app").innerHTML = `<div class="qbar"><i style="width:${pct(exam ? answered : Object.keys(c.done).length, c.ids.length)}%"></i></div>
+    <div class="qmeta"><span class="pill brand">${esc(q.topic)}</span>
+      ${r?.w ? `<span class="pill bad">טעיתם בה ${r.w}×</span>` : ""}
+      ${q.seen?.length > 1 ? `<span class="pill">הופיעה ב-${q.seen.length} בחינות</span>` : ""}
+      ${q.old ? `<span class="pill warn">ייתכן שאינה עדכנית</span>` : ""}</div>
+    <div class="qtext">${hl(q.q)}</div>
+    ${hideOpts ? `<div class="card" style="margin-top:18px;text-align:center"><div style="font-size:15px">נסחו לעצמכם תשובה לפני שאתם רואים את האפשרויות.</div></div>` : `<div class="opts">${opts}</div>`}
+    ${!exam && !shown && mine !== undefined && S.settings.conf ? `<div class="conf"><div class="lbl">כמה אתם בטוחים?</div>
+      <div class="seg" style="margin:0">${CONF.map(([k, l]) => `<button onclick="check('${k}')">${l}</button>`).join("")}</div></div>` : ""}
+    ${shown ? feedback(q, mine, o, true) : ""}
+    <div class="small muted" style="text-align:center;margin-top:18px">${esc(q.orig ? "שאלה מקורית" : q.src)}</div>`;
+  // one primary action, context-dependent
+  let primary;
+  if (hideOpts) primary = `<button class="btn" onclick="reveal()">הצג תשובות</button>`;
+  else if (!exam && !shown && mine !== undefined && !S.settings.conf) primary = `<button class="btn" onclick="check()">בדיקה</button>`;
+  else if (!exam && !shown) primary = `<button class="btn" disabled>${mine === undefined ? "בחרו תשובה" : "דרגו ביטחון"}</button>`;
+  else if (c.i < c.ids.length - 1) primary = `<button class="btn" onclick="move(1)">הבאה</button>`;
+  else primary = `<button class="btn" onclick="finish()">${exam ? "הגשה" : "סיום"}</button>`;
+  $("#actions").innerHTML = `<div class="actions"><div class="wrap">
+    <button class="icon" onclick="move(-1)" ${c.i === 0 ? "disabled style='opacity:.3'" : ""} aria-label="הקודמת">→</button>${primary}</div></div>`;
+  if (exam){
+    const upd = () => { const ms = c.end - Date.now(), el = $("#timer"); if (!el) return clearInterval(tick);
+      if (ms <= 0){ clearInterval(tick); finish(true); return; }
+      el.textContent = `${Math.floor(ms / 60e3)}:${String(Math.floor(ms / 1e3) % 60).padStart(2, "0")}`; el.style.color = ms < 10 * 60e3 ? "var(--bad)" : ""; };
+    upd(); tick = setInterval(upd, 1000);
+  }
+  window.scrollTo({top:0});
+}
+function feedback(q, mine, o, live){
+  const ok = mine === q.a, pos = i => LET[o.indexOf(i)], r = S.q[q.id], note = r?.note;
+  const others = q.ww.map((w, i) => (i === q.a || i === mine || !w) ? "" : `<div class="other"><b>${pos(i)}.</b> ${esc(w)}</div>`).join("");
+  return `<div class="fb">
+    <div class="verdict" style="color:var(${ok ? "--ok" : "--bad"})">${ok ? "נכון" : mine === undefined ? `התשובה הנכונה: ${pos(q.a)}` : `לא נכון. התשובה הנכונה: ${pos(q.a)}`}</div>
+    ${!ok && mine !== undefined && q.ww[mine] ? `<p><span class="lab">למה ${pos(mine)} שגויה</span>${esc(q.ww[mine])}</p>` : ""}
+    <p><span class="lab">למה ${pos(q.a)} נכונה</span>${esc(q.ex)}</p>
+    ${q.law ? `<div class="law">${esc(q.law)}</div>` : ""}
+    ${q.tip ? `<div class="tip">💡 ${esc(q.tip)}</div>` : ""}
+    ${q.old ? `<div class="tip">⚠️ ${esc(q.oldNote)}</div>` : ""}
+    ${note ? `<div class="tip" style="background:var(--brand-soft)">✍️ ${esc(note)}</div>` : ""}
+    ${others ? `<details><summary>שאר התשובות</summary>${others}</details>` : ""}
+    ${live && !ok ? `<details><summary>ניתוח הטעות</summary>
+      <div class="chips" style="margin-top:6px">${CAUSES.map(([k, l]) => `<button class="chip ${r.cause === k ? "on" : ""}" onclick="setCause('${q.id}','${k}')">${l}</button>`).join("")}</div>
+      ${r.cause ? `<div class="small muted" style="margin-top:8px">${CAUSE_TIP[r.cause]}</div>` : ""}
+      <textarea rows="2" placeholder="הכלל במילים שלכם (יוצג בפעם הבאה)" onchange="st('${q.id}').note=this.value;save()">${esc(note || "")}</textarea></details>` : ""}
+  </div>`;
+}
+function setCause(id, k){ const r = st(id); if (r.cause) S.causes[r.cause] = Math.max(0, (S.causes[r.cause] || 1) - 1);
+  r.cause = k; S.causes[k] = (S.causes[k] || 0) + 1; save(); renderQuiz(); document.querySelectorAll(".fb details")[1]?.setAttribute("open", ""); }
+function pick(oi){ const c = S.cur, id = c.ids[c.i]; if (c.done[id] !== undefined) return; c.ans[id] = oi; save(); renderQuiz(); }
+function check(conf){ const c = S.cur, id = c.ids[c.i]; if (c.ans[id] === undefined || c.done[id] !== undefined) return;
+  c.conf[id] = conf || "think"; c.done[id] = record(id, c.ans[id], conf) ? 1 : 0; save(); renderQuiz(); }
+function reveal(){ const c = S.cur; c.rev[c.ids[c.i]] = 1; save(); renderQuiz(); }
+function move(d){ const c = S.cur; c.i = Math.max(0, Math.min(c.ids.length - 1, c.i + d)); save(); renderQuiz(); }
+function toggleFlag(){ const c = S.cur, id = c.ids[c.i]; c.flag[id] = !c.flag[id];
+  if (c.flag[id]) S.flags[id] = Date.now(); else delete S.flags[id]; save(); renderQuiz(); }
+function mapSheet(){
+  const c = S.cur, d = document.createElement("div"); d.className = "sheet";
+  d.innerHTML = `<div><div class="row" style="justify-content:space-between;margin-bottom:14px"><b>מפת שאלות</b><span class="small muted">${Object.keys(c.ans).length}/${c.ids.length} נענו · ★ מסומנות</span></div>
+    <div class="grid5">${c.ids.map((x, k) => `<button class="dot ${c.ans[x] !== undefined ? "ans" : ""} ${c.flag[x] ? "flag" : ""} ${k === c.i ? "cur" : ""}" data-k="${k}">${k + 1}</button>`).join("")}</div></div>`;
+  d.onclick = e => { const k = e.target.dataset?.k; if (k !== undefined){ c.i = +k; save(); renderQuiz(); } if (k !== undefined || e.target === d) d.remove(); };
+  document.body.appendChild(d);
+}
+function quit(){
+  const c = S.cur;
+  if (c.mode === "exam"){ if (confirm("לצאת מהמבחן? אפשר להמשיך אחר כך מדף הבית.")) go("home"); return; }
+  if (Object.keys(c.done).length) return finish();
+  S.cur = null; save(); go("home");
+}
+function finish(timeUp){
+  const c = S.cur; clearInterval(tick);
+  if (c.mode === "exam"){
+    const un = c.ids.filter(id => c.ans[id] === undefined).length;
+    if (!timeUp && un && !confirm(`${un} שאלות ללא מענה. להגיש?`)) return;
+    for (const id of c.ids) if (c.done[id] === undefined) c.done[id] = record(id, c.ans[id] ?? -1) ? 1 : 0;
+  }
+  const answered = c.ids.filter(id => c.done[id] !== undefined), right = answered.filter(id => c.done[id]).length;
+  const full = c.mode === "exam";
+  const res = {date:Date.now(), title:c.title, kind:c.kind, n:c.ids.length, answered:answered.length, right, full,
+    score: pct(right, full ? c.ids.length : answered.length), mins: Math.round((Date.now() - c.started) / 60e3),
+    ids: full ? c.ids : answered, ans:c.ans, order:c.order};
+  if (answered.length) S.sessions.push(res);
+  if (S.sessions.length > 200) S.sessions = S.sessions.slice(-200);
+  S.cur = null; save(); renderResult(res);
+}
+function renderResult(res){
+  history.replaceState(null, "", "#/result");
+  const wrong = res.ids.filter(id => res.ans[id] !== byId[id]?.a), pass = res.score >= 60;
+  const tt = {};
+  for (const id of res.ids){ const q = byId[id]; if (!q) continue; (tt[q.topic] ||= [0, 0]); tt[q.topic][1]++; if (res.ans[id] === q.a) tt[q.topic][0]++; }
+  shell(res.title, "home", "", () => `
+    <div class="card" style="text-align:center;margin-top:8px">${ring(res.score, 130)}
+      <div style="font-weight:700;margin-top:6px;color:var(${pass ? "--ok" : "--bad"})">${res.score === 100 ? "מושלם" : pass ? "עובר" : "לא עובר"}</div>
+      <div class="small muted">${res.right} מתוך ${res.full ? res.n : res.answered} · ${res.mins} דקות</div></div>
+    <div style="margin-top:14px">${wrong.length ? `<button class="btn" onclick="${act(() => start("סבב תיקון", shuffle(wrong)))}">סבב תיקון · ${wrong.length} טעויות</button>`
+      : `<button class="btn" onclick="go('home')">לדף הבית</button>`}</div>
+    <div class="sec-title">לפי נושא</div>
+    <div class="list">${Object.entries(tt).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).map(([t, [a, b]]) =>
+      item("", esc(t), "", `<b style="color:var(${a === b ? "--ok" : "--bad"})">${a}/${b}</b>`)).join("")}</div>
+    ${wrong.length ? `<div class="sec-title">הטעויות · עם הסבר</div>${wrong.map(id => reviewCard(id, res.ans[id], res.order?.[id])).join("")}` : ""}`);
+}
+function reviewCard(id, mine, o){
+  const q = byId[id]; if (!q) return "";
+  o = o || [0, 1, 2, 3];
+  return `<div class="card" style="margin-bottom:10px"><div class="qtext" style="font-size:16px">${hl(q.q)}</div>
+    <div class="opts" style="margin-top:12px">${o.map((oi, pos) => `<div class="opt ${oi === q.a ? "ok" : oi === mine ? "bad" : "dim"}" style="font-size:15px;padding:10px"><span class="k">${LET[pos]}</span><span>${esc(q.o[oi])}</span></div>`).join("")}</div>
+    ${feedback(q, mine >= 0 ? mine : undefined, o, false).replace('class="fb"', 'class="fb" style="padding:0;margin-top:14px"')}</div>`;
+}
+document.addEventListener("keydown", e => {
+  if (!location.hash.startsWith("#/quiz") || !S.cur || /INPUT|TEXTAREA/.test(e.target.tagName) || document.querySelector(".sheet")) return;
+  const c = S.cur, id = c.ids[c.i], learn = c.mode === "learn";
+  const n = "1234".indexOf(e.key) + 1 || "אבגד".indexOf(e.key) + 1;
+  if (e.key === " " && learn && S.settings.recall && !c.rev[id]){ e.preventDefault(); reveal(); }
+  else if (n) pick(ord(c, id)[n - 1]);
+  else if (e.key === "Enter"){ if (learn && c.done[id] === undefined && c.ans[id] !== undefined) check(); else if (c.i < c.ids.length - 1) move(1); }
+  else if (e.key === "ArrowLeft") move(1); else if (e.key === "ArrowRight") move(-1);
+});
+
+/* ---------- PROGRESS ---------- */
+let openMis = null;
+function view_progress(sub = "overview"){
+  const segs = [["overview","סקירה"],["topics","נושאים"],["mistakes","טעויות"],["history","היסטוריה"]];
+  shell(null, null, "progress", () => `<div class="seg">${segs.map(([k, l]) => `<button class="${sub === k ? "on" : ""}" onclick="go('progress/${k}')">${l}</button>`).join("")}</div>
+    <div style="margin-top:12px">${{overview:progOverview, topics:progTopics, mistakes:progMistakes, history:progHistory}[sub]?.() || progOverview()}</div>`);
+}
+function progOverview(){
+  const all = active(), mast = all.filter(q => isMastered(q.id)).length, seen = all.filter(q => S.q[q.id]?.a).length;
+  const att = Object.values(S.q).reduce((s, r) => s + r.a, 0), cor = Object.values(S.q).reduce((s, r) => s + r.c, 0);
+  const days = []; for (let i = 20; i >= 0; i--){ const d = new Date(Date.now() - i * DAY).toISOString().slice(0, 10); days.push([d, S.activity[d] || 0]); }
+  const mx = Math.max(10, ...days.map(d => d[1]));
+  const topCause = CAUSES.filter(([k]) => S.causes[k]).sort((a, b) => S.causes[b[0]] - S.causes[a[0]])[0];
+  return `<div class="stats3">
+      <div class="card"><div class="n">${predicted()}</div><div class="l">ציון צפוי</div></div>
+      <div class="card"><div class="n">${pct(cor, att)}%</div><div class="l">דיוק</div></div>
+      <div class="card"><div class="n">${pct(seen, all.length)}%</div><div class="l">כיסוי המאגר</div></div></div>
+    <div class="card" style="margin-top:10px"><div class="row" style="justify-content:space-between"><b>שליטה</b><span class="small muted">${mast} / ${all.length}</span></div>
+      <div class="meter" style="margin-top:8px"><i style="width:${pct(mast, all.length)}%"></i></div></div>
+    <div class="sec-title">פעילות · 3 שבועות</div>
+    <div class="card"><svg viewBox="0 0 420 90" width="100%" role="img" aria-label="שאלות ביום">${days.map(([d, n], i) =>
+      `<rect x="${400 - i * 19.5}" y="${80 - 75 * n / mx}" width="14" height="${Math.max(2, 75 * n / mx)}" rx="3" fill="${n ? "var(--brand)" : "var(--soft)"}"><title>${fmt(d)}: ${n}</title></rect>`).join("")}</svg>
+      <div class="row small muted" style="justify-content:space-between"><span>לפני 3 שבועות</span><span>היום</span></div></div>
+    <div class="sec-title">תובנות</div>
+    <div class="list">
+      ${item("🎚", "כיול ביטחון", calibAdvice())}
+      ${item("🧭", "הסיבה העיקרית לטעויות", topCause ? `${topCause[1]} — ${CAUSE_TIP[topCause[0]]}` : "סמנו סיבה אחרי טעות (ב'ניתוח הטעות') כדי לקבל ניתוח.")}
+    </div>`;
+}
+function calibAdvice(){
+  const [sa, sb] = S.calib.sure || [0, 0], [ga, gb] = S.calib.guess || [0, 0];
+  if (sb < 15) return "צריך עוד נתונים. דרגו ביטחון בכל שאלה.";
+  if (pct(sa, sb) < 90) return `כשאתם "בטוחים" אתם צודקים ב-${pct(sa, sb)}% בלבד. טעויות כאלה חוזרות ראשונות.`;
+  if (gb >= 10 && pct(ga, gb) > 55) return "גם בניחוש אתם צודקים לרוב. בבחינה — תמיד לענות.";
+  return `כשאתם בטוחים — אתם צודקים (${pct(sa, sb)}%).`;
+}
+function progTopics(){
+  const ts = topicStats().sort((a, b) => (QB.weights[b.t] || 0) - (QB.weights[a.t] || 0));
+  return `<div class="list">${ts.map(o => { const acc = o.seen ? pct(o.corr, o.seen) : null;
+    return `<div class="item" style="display:block"><div class="row" style="justify-content:space-between"><span class="t">${esc(o.t)}</span>
+      <b style="color:var(${acc === null ? "--muted" : acc >= 85 ? "--ok" : acc >= 60 ? "--warn" : "--bad"})">${acc === null ? "—" : acc + "%"}</b></div>
+      <div class="meter" style="margin:8px 0 4px"><i style="width:${pct(o.mast, o.total)}%"></i></div>
+      <div class="s small muted">נשלטו ${o.mast}/${o.total} · נענו ${o.seen}${o.mis ? ` · <span style="color:var(--bad)">${o.mis} טעויות</span>` : ""}</div></div>`; }).join("")}</div>`;
+}
+function progMistakes(){
+  const qs = active().filter(q => isMistake(q.id)).sort((a, b) => (S.q[b.id].hc ? 1 : 0) - (S.q[a.id].hc ? 1 : 0) || S.q[b.id].w - S.q[a.id].w);
+  if (!qs.length) return `<div class="empty">אין טעויות פתוחות.</div>`;
+  return `<button class="btn" onclick="${act(() => start("הטעויות שלי", mistakeIds()))}">תרגול ${qs.length} הטעויות</button>
+    <div class="list" style="margin-top:12px">${qs.slice(0, 60).map(q => { const r = S.q[q.id];
+      return `<button class="item" onclick="openMis=openMis==='${q.id}'?null:'${q.id}';go('progress/mistakes')"><span class="tx">
+        <div class="s">${esc(q.topic)}${r.hc ? ` · <span style="color:var(--bad)">טעות בביטחון</span>` : ""}</div>
+        <div style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(q.q)}</div></span><span class="pill bad">${r.w}×</span></button>
+        ${openMis === q.id ? `<div class="item" style="display:block;background:var(--soft)">${reviewCard(q.id, r.lastWrong, null)}</div>` : ""}`; }).join("")}</div>`;
+}
+function progHistory(){
+  const ses = S.sessions.slice().reverse().slice(0, 50);
+  if (!ses.length) return `<div class="empty">עוד אין מפגשים.</div>`;
+  return `<div class="list">${ses.map(s => item("", esc(s.title), `${new Date(s.date).toLocaleDateString("he-IL")} · ${s.right}/${s.full ? s.n : s.answered} · ${s.mins} דק'`,
+    `<span class="pill ${s.score >= 60 ? "ok" : "bad"}">${s.score}</span>`)).join("")}</div>`;
+}
+
+/* ---------- LEARN ---------- */
+const STRATEGY = `<h4>מבנה הבחינה</h4><ul><li>25 שאלות אמריקאיות, תשובה אחת נכונה. <b>עובר: 60</b> (15 נכונות).</li>
+<li>שעתיים ≈ <b>4.8 דקות לשאלה</b>. ספר "חוקים ותקנות" מחולק בבחינה. מושגים ופסקי דין — לא.</li><li>אין קנס על טעות: <b>לא משאירים שאלה ריקה</b>.</li></ul>
+<h4>שיטת עבודה בבחינה</h4><ol><li>סבב ראשון: כל מה שבטוחים בו (≈45 דק'). מסמנים את השאר.</li>
+<li>סבב שני: השאלות המסומנות — מאתרים את הסעיף בספר החוקים.</li><li>15 דקות אחרונות: לוודא שכל שאלה סומנה בטופס.</li></ol>
+<h4>מלכודות קבועות</h4><ul><li><b>"איזו מהטענות אינה נכונה"</b> — קראו פעמיים. מילות שלילה מסומנות בצהוב בתרגול.</li>
+<li>"א ו-ב נכונות" — בדקו כל אפשרות בנפרד לפני שבוחרים צירוף.</li>
+<li>מספרים קרובים (30/45/60 יום, ½ מול ⅔ מול ¾) — בדיוק מה שהכרטיסיות מאמנות.</li>
+<li>פרט קטן בתיאור המקרה (יש הזמנה בכתב? המתווך רשום? מי חתם?) הוא בדרך כלל לב השאלה.</li></ul>
+<h4>איך האפליקציה מלמדת</h4><ul><li><b>שליפה, לא קריאה חוזרת</b> — לענות על שאלות זו הדרך היעילה ביותר לזכור.</li>
+<li><b>חזרה מרווחת (FSRS)</b> — כל שאלה חוזרת רגע לפני שתשכחו אותה, ולפחות פעם נוספת לפני הבחינה.</li>
+<li><b>דירוג ביטחון</b> — טעות "בטוחה" מתוקנת היטב אבל נוטה לחזור, ולכן היא חוזרת ראשונה.</li>
+<li><b>ערבוב נושאים</b> — מאמן לזהות איזה כלל רלוונטי, כמו בבחינה.</li>
+<li><b>ניתוח טעות וניסוח הכלל במילים שלכם</b> — הופך טעות ללמידה.</li></ul>`;
+let fcI = 0, fcFlip = false, fcDeck = null;
+function view_learn(sub, arg){
+  if (sub === "strategy") return shell("אסטרטגיית בחינה", "learn", "learn", `<div class="card notes">${STRATEGY}</div>`);
+  if (sub === "t"){
+    const n = (QB.notes || []).find(x => x.topic === arg);
+    const qn = active().filter(q => q.topic === arg).map(q => q.id);
+    return shell(arg, "learn", "learn", () => `<div class="card notes">${n ? sanitize(n.summary_html) : `<div class="empty">אין סיכום לנושא זה.</div>`}</div>
+      ${qn.length ? `<button class="btn" style="margin-top:14px" onclick="${act(() => start(arg, shuffle(qn).sort((x, y) => isMastered(x) - isMastered(y)).slice(0, 20)))}">תרגול 20 שאלות בנושא</button>` : ""}`);
+  }
+  if (sub === "flash") return shell("כרטיסיות", "learn", "learn", () => {
+    const nums = QB.numbers || [];
+    if (!nums.length) return `<div class="empty">אין כרטיסיות.</div>`;
+    fcDeck ??= nums.map((_, i) => i).sort((a, b) => (S.fc[b] || 0) - (S.fc[a] || 0) || Math.random() - .5);
+    const f = nums[fcDeck[fcI % fcDeck.length]];
+    return `<div class="card flash" onclick="fcFlip=!fcFlip;view_learn('flash')"><div>${esc(f.fact)}
+        ${fcFlip ? `<div class="small muted" style="margin-top:14px">${esc(f.law)}</div>` : `<div class="small muted" style="margin-top:14px">הקישו לחשיפת המקור</div>`}</div></div>
+      <div class="row" style="margin-top:14px"><button class="btn sec" onclick="fcMark(1)">לא ידעתי</button><button class="btn" onclick="fcMark(-1)">ידעתי</button></div>
+      <p class="small muted" style="text-align:center">${fcI % fcDeck.length + 1} / ${fcDeck.length} · היום ${S.fcDays[today()] || 0}</p>`;
+  });
+  shell(null, null, "learn", () => {
+    const notes = QB.notes || [], ts = topicStats();
+    return `<div class="list" style="margin-top:8px">
+      ${item("🧭", "אסטרטגיית בחינה", "מבנה, ניהול זמן, מלכודות", "", "go('learn/strategy')")}
+      ${item("🃏", "כרטיסיות מספרים ומועדים", `${(QB.numbers || []).length} עובדות לשינון`, "", "go('learn/flash')")}</div>
+    <div class="sec-title">סיכומים לפי נושא</div>
+    <div class="list">${notes.map(n => { const o = ts.find(x => x.t === n.topic);
+      return item("📘", esc(n.topic), o ? `${o.total} שאלות${o.seen ? ` · דיוק ${pct(o.corr, o.seen)}%` : ""}` : "", "", `go('learn/t/${encodeURIComponent(n.topic).replace(/'/g, "%27")}')`); }).join("")
+      || `<div class="empty">הסיכומים עדיין לא נטענו.</div>`}</div>`;
+  });
+}
+function fcMark(d){ const k = fcDeck[fcI % fcDeck.length]; S.fc[k] = Math.max(0, (S.fc[k] || 0) + d); S.fcDays[today()] = (S.fcDays[today()] || 0) + 1; save(); fcI++; fcFlip = false; view_learn("flash"); }
+// Notes HTML comes from our own build but is still restricted to a tag allowlist.
+function sanitize(html){
+  const t = document.createElement("template"); t.innerHTML = html || "";
+  const ok = new Set(["H4","H5","UL","OL","LI","B","STRONG","I","EM","P","BR","TABLE","THEAD","TBODY","TR","TD","TH","SPAN","SMALL"]);
+  (function walk(n){ for (const c of [...n.childNodes]){ if (c.nodeType === 1){ if (!ok.has(c.tagName)){ c.replaceWith(...c.childNodes); continue; }
+    for (const a of [...c.attributes]) c.removeAttribute(a.name); walk(c); } } })(t.content);
+  return t.innerHTML;
+}
+
+/* ---------- SETTINGS ---------- */
+function view_settings(){
+  const s = S.settings;
+  const sw = (key, on) => `<label class="switch"><input type="checkbox" ${on ? "checked" : ""} onchange="S.settings.${key}=this.checked;save()"><span></span></label>`;
+  shell("הגדרות", "home", "", `
+    <div class="sec-title">בחינה</div><div class="list">
+      ${item("📅", "תאריך הבחינה", "", `<input type="date" value="${s.examDate}" onchange="S.settings.examDate=this.value;save()">`)}
+      ${item("🔢", "שאלות בתרגול חכם", "", `<input type="number" min="5" max="100" style="width:70px" value="${s.perSession}" onchange="S.settings.perSession=Math.max(5,+this.value||20);save()">`)}</div>
+    <div class="sec-title">שיטת לימוד</div><div class="list">
+      ${item("🎚", "דירוג ביטחון", "לפני כל משוב (מומלץ)", sw("conf", s.conf))}
+      ${item("🧠", "שליפה חופשית", "התשובות מוסתרות עד שמנסחים תשובה בראש", sw("recall", s.recall))}
+      ${item("🔀", "ערבוב תשובות", "כמו גרסאות שונות של הבחינה", sw("shuffle", s.shuffle))}
+      ${item("⚠️", "שאלות לא עדכניות", "לכלול שאלות שהחוק השתנה מאז", sw("outdated", s.outdated))}</div>
+    <div class="sec-title">תצוגה</div><div class="list">
+      ${item("🌓", "ערכת צבעים", "", `<select onchange="S.settings.theme=this.value;save();applyTheme()">${[["","אוטומטי"],["light","בהיר"],["dark","כהה"]].map(([v, l]) => `<option value="${v}" ${s.theme === v ? "selected" : ""}>${l}</option>`).join("")}</select>`)}</div>
+    <div class="sec-title">גיבוי</div><div class="list">
+      ${item("⬇️", "הורדת גיבוי", "ההתקדמות נשמרת רק בדפדפן הזה", "", "exportData()")}
+      <label class="item" style="cursor:pointer"><span class="ic">⬆️</span><span class="tx"><div class="t">שחזור מגיבוי</div></span><span class="chev"></span><input type="file" accept=".json" hidden onchange="importData(this.files[0])"></label>
+      ${item("🗑", `<span style="color:var(--bad)">איפוס התקדמות</span>`, "", "", "if(confirm('למחוק את כל ההתקדמות? אי אפשר לבטל.')){S=defaults();save();go('home')}", false)}</div>
+    <p class="small muted" style="margin:16px 4px">${QB.questions.length} שאלות · ${QB.exams.length} מבחנים רשמיים · ${QB.questions.filter(q => q.orig).length} מקוריות · עודכן ${QB.built || ""}</p>`);
+}
+function exportData(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type:"application/json"}));
+  a.download = `broker-exam-backup-${today()}.json`; a.click(); }
+function importData(f){ if (!f) return; f.text().then(t => { const d = JSON.parse(t); if (!d.q) throw 0; S = Object.assign(defaults(), d); save(); toast("שוחזר"); go("home"); })
+  .catch(() => toast("קובץ גיבוי לא תקין")); }
+
+route();
+// Installable/offline app: service worker (http/https only) + ask the browser to keep our storage.
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
+navigator.storage?.persist?.().catch(() => {});
+</script>
+</body>
+</html>
